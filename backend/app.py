@@ -15,7 +15,7 @@ from simulator import TrafficSimulator
 
 app = Flask(__name__)
 # Enable CORS for frontend connectivity
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 # Global instances
 detector = IntrusionDetector()
@@ -70,9 +70,12 @@ def get_alerts():
         "data": detector.alerts
     })
 
-@app.route('/api/start', methods=['POST'])
+@app.route('/api/start', methods=['POST', 'OPTIONS'])
 def start_engine():
     """Starts the capture engine."""
+    if request.method == 'OPTIONS':
+        return '', 200
+        
     global capture_thread
     if engine_state["is_running"]:
         return jsonify({"status": "error", "message": "Engine is already running."}), 400
@@ -95,9 +98,12 @@ def start_engine():
 
     return jsonify({"status": "success", "message": f"Engine started securely."})
 
-@app.route('/api/stop', methods=['POST'])
+@app.route('/api/stop', methods=['POST', 'OPTIONS'])
 def stop_engine():
     """Stops the capture engine."""
+    if request.method == 'OPTIONS':
+        return '', 200
+        
     if not engine_state["is_running"]:
         return jsonify({"status": "error", "message": "Engine is already stopped."}), 400
 
