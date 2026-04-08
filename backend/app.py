@@ -1,4 +1,5 @@
 import threading
+import os
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from scapy.all import sniff
@@ -101,4 +102,5 @@ def stop_engine():
 
 if __name__ == '__main__':
     # Run Flask directly (Not for production, but optimal for this academic deployment layout)
-    app.run(host='0.0.0.0', port=5000, debug=False)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)
