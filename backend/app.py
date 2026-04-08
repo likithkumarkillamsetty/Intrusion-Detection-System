@@ -15,7 +15,7 @@ from simulator import TrafficSimulator
 
 app = Flask(__name__)
 # Enable CORS for frontend connectivity
-CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Global instances
 detector = IntrusionDetector()
