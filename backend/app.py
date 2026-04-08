@@ -2,7 +2,14 @@ import threading
 import os
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from scapy.all import sniff
+
+try:
+    from scapy.all import sniff
+    SCAPY_AVAILABLE = True
+except Exception as e:
+    print(f"[*] Scapy import failed (expected on cloud hosts without libpcap). Reason: {e}")
+    sniff = None
+    SCAPY_AVAILABLE = False
 from detector import IntrusionDetector
 from simulator import TrafficSimulator
 
@@ -27,11 +34,14 @@ def _scapy_sniff_worker(interface=None):
         return not engine_state["is_running"]
 
     try:
+        if not SCAPY_AVAILABLE:
+            raise Exception("Scapy module not installed or missing OS dependencies.")
+        
         engine_state["source"] = "Scapy"
         print("[*] Starting Scapy Sniffing on API request...")
         sniff(prn=detector.analyze_packet, store=False, iface=interface, stop_filter=stop_filter)
     except Exception as e:
-        print(f"[!] Scapy failed to start (likely missing privileges). Reason: {e}")
+        print(f"[!] Scapy failed to start. Reason: {e}")
         engine_state["source"] = "Simulator"
         print("[*] Falling back to Traffic Simulator.")
         simulator.start()
