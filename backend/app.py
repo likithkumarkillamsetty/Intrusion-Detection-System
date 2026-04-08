@@ -46,6 +46,11 @@ def _scapy_sniff_worker(interface=None):
         print("[*] Falling back to Traffic Simulator.")
         simulator.start()
 
+@app.route('/', methods=['GET', 'HEAD'])
+def health_check():
+    """Render health check endpoint."""
+    return "OK", 200
+
 @app.route('/api/stats', methods=['GET'])
 def get_stats():
     """Return summary and system state."""
