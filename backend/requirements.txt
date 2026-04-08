@@ -1,0 +1,5 @@
+scapy
+colorama
+Flask
+Flask-CORS
+gunicorn
